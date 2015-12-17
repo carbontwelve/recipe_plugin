@@ -3,12 +3,12 @@ Plugin Name: ZipList Recipe Plugin
 Plugin URI: http://www.ziplist.com/recipe_plugin
 Plugin GitHub: https://github.com/Ziplist/recipe_plugin
 Description: A plugin that adds all the necessary microdata to your recipes, so they will show up in Google's Recipe Search
-Version: 3.1
+Version: 2.6
 Author: ZipList.com
 Author URI: http://www.ziplist.com/
-License: Direct license by original author - http://www.808.dk/?code-javascript-print 
+License: CC 3.0 http://creativecommons.org/licenses/by/3.0/
 
-Copyright 2011, 2012, 2013, 2014 ZipList, Inc.
+Copyright 2011, 2012 ZipList, Inc.
 This code is derived from an example provided by Ulrik D. Hansen and licensed under the Creative Commons Attribution License.
 You can see the original post at http://www.808.dk/?code-javascript-print
 */
@@ -33,14 +33,15 @@ You can see the original post at http://www.808.dk/?code-javascript-print
 */
 
 var win=null;
-function zlrPrint(id, plugindir)
+function zlrPrint(id)
 {
 	var content = document.getElementById(id).innerHTML;
 	win = window.open();
 	self.focus();
 	win.document.open();
 	win.document.write('<html><head>');
-	win.document.write('<link charset=\'utf-8\' href=\'' + plugindir + 'zlrecipe-print.css\' rel=\'stylesheet\' type=\'text/css\' />');
+	win.document.write('<link charset=\'utf-8\' href=\'https://feedyourskull.com/wp-content/plugins/ziplist-recipe-plugin/generic.css\' rel=\'stylesheet\' type=\'text/css\' />');
+	/* win.document.write('<link charset=\'utf-8\' href=\'http://dev.ziplist.com.s3.amazonaws.com/zlrecipe-print.css\' rel=\'stylesheet\' type=\'text/css\' />'); */
 	win.document.write('</head><body onload="print();">');
 	win.document.write('<div id=\'zlrecipe-print-container\' >');
 	win.document.write(content);

@@ -4,12 +4,12 @@ Plugin Name: ZipList Recipe Plugin
 Plugin URI: http://www.ziplist.com/recipe_plugin
 Plugin GitHub: https://github.com/Ziplist/recipe_plugin
 Description: A plugin that adds all the necessary microdata to your recipes, so they will show up in Google's Recipe Search
-Version: 3.1
+Version: 4.0
 Author: ZipList.com
 Author URI: http://www.ziplist.com/
 License: GPLv3 or later
 
-Copyright 2011, 2012, 2013, 2014 ZipList, Inc.
+Copyright 2011, 2012 ZipList, Inc.
 This code is derived from the 1.3.1 build of RecipeSEO released by codeswan: http://sushiday.com/recipe-seo-plugin/ and licensed under GPLv2 or later
 */
 
@@ -40,7 +40,7 @@ if (!defined('AMD_ZLRECIPE_VERSION_KEY'))
     define('AMD_ZLRECIPE_VERSION_KEY', 'amd_zlrecipe_version');
 
 if (!defined('AMD_ZLRECIPE_VERSION_NUM'))
-    define('AMD_ZLRECIPE_VERSION_NUM', '3.1');
+    define('AMD_ZLRECIPE_VERSION_NUM', '2.6');
 
 if (!defined('AMD_ZLRECIPE_PLUGIN_DIRECTORY'))
 		define('AMD_ZLRECIPE_PLUGIN_DIRECTORY', plugins_url() . '/' . dirname(plugin_basename(__FILE__)) . '/');
@@ -90,7 +90,7 @@ add_option('zlrecipe_custom_print_image', '');
 register_activation_hook(__FILE__, 'amd_zlrecipe_install');
 add_action('plugins_loaded', 'amd_zlrecipe_install');
 
-add_action('admin_init', 'amd_zlrecipe_add_recipe_button');
+add_action('admin_head', 'amd_zlrecipe_add_recipe_button');
 add_action('admin_head','amd_zlrecipe_js_vars');
 
 function amd_zlrecipe_js_vars() {
@@ -101,7 +101,7 @@ function amd_zlrecipe_js_vars() {
     if (is_admin()) {
         ?>
         <script type="text/javascript">
-        var zl_post_id = '<?php global $post; echo $post->ID; ?>';
+        var post_id = '<?php global $post; echo $post->ID; ?>';
         </script>
         <?php
     }
@@ -133,7 +133,7 @@ $zlrecipe_db_version = "3.1";	// This must be changed when the DB structure is m
 // Updates the table if needed
 // Plugin Ver         DB Ver
 //   1.0 - 1.3        3.0
-//   1.4x - 3.1       3.1  Adds Notes column to recipes table
+//   1.4x - 2.6       3.1  Adds Notes column to recipes table
 
 function amd_zlrecipe_install() {
     global $wpdb;
@@ -395,15 +395,63 @@ function amd_zlrecipe_settings() {
     <div class="wrap">
         <form enctype="multipart/form-data" method="post" action="" name="zlrecipe_settings_form">
             <h2><img src="' . $zlrecipe_icon . '" /> ZipList Recipe Plugin Settings</h2>
-            <p>This is the legacy ZipList recipe plugin. It will continue to function without the ZipList service.</p>
-            <p>Everything can now be styled with the included stylesheets.</p>
-            <p>For full legacy customization options, see the <a href="http://marketing.ziplist.com.s3.amazonaws.com/plugin_instructions.pdf" target="_blank">Customization and Instructions document</a>.</p>
+            For full customization options, see the <a href="http://marketing.ziplist.com.s3.amazonaws.com/plugin_instructions.pdf" target="_blank">Instructions document</a>.
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Partner Key</th>
+                    <td>
+                        <input placeholder="Please contact Ziplist to get your partner key" type="text" name="ziplist-partner-key" value="' . $ziplist_partner_key . '" class="regular-text" />
+                        <br />
+                        <span style="font-weight: bold;">Enhance recipe search and add your blog name and logo to your recipes.</span>
+                        <a href="http://www.ziplist.com/partner_signup" target="_blank">
+                            Request a free partner key now
+                        </a>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">ZipList Recipe Box and Shopping List</th>
+                    <td><label><input type="checkbox" name="ziplist-recipe-button-hide" value="Hide" ' . $ziplist_recipe_button_hide . ' /> Don\'t enable these features</label></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">
+                    	Custom Save Recipe Button
+                    	<br />
+                    	(Optional)
+                    </th>
+                    <td>
+                        <input placeholder="URL to custom Save Recipe button image" type="text" name="custom-save-image" value="' . $custom_save_image . '" class="regular-text" />
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">
+                    	Custom Print Button
+                    	<br />
+                    	(Optional)
+                    </th>
+                    <td>
+                        <input placeholder="URL to custom Print button image" type="text" name="custom-print-image" value="' . $custom_print_image . '" class="regular-text" />
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">ZipList Recipe Plugin Link</th>
+                    <td><label><input type="checkbox" name="ziplist-attribution-hide" value="Hide" ' . $ziplist_attribution_hide . ' /> Don\'t show plugin link</label></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Printed Output: Recipe Permalink</th>
+                    <td><label><input type="checkbox" name="printed-permalink-hide" value="Hide" ' . $printed_permalink_hide . ' /> Don\'t show permalink in printed output</label></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Printed Output: Copyright Statement</th>
+                    <td><input type="text" name="printed-copyright-statement" value="' . $printed_copyright_statement . '" class="regular-text" /></td>
+                </tr>
+            </table>
+
             <hr />
 			<h3>General</h3>
             <table class="form-table">
                 <tr valign="top">
                     <th scope="row">Stylesheet</th>
-                    <td><label><input type="checkbox" name="stylesheet" value="zlrecipe-std" ' . $stylesheet . ' /> Use legacy ZipList recipe style (included)</label></td>
+                    <td><label><input type="checkbox" name="stylesheet" value="zlrecipe-std" ' . $stylesheet . ' /> Use ZipList recipe style</label></td>
                 </tr>
                 <tr valign="top">
                     <th scope="row">Recipe Title</th>
@@ -431,28 +479,6 @@ function amd_zlrecipe_settings() {
 						<select name="outer-border-style">' . $obs . '</select>
 					</td>
 				</tr>
-            </table>
-            <hr />
-			<h3>Printing</h3>
-            <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">
-                    	Custom Print Button
-                    	<br />
-                    	(Optional)
-                    </th>
-                    <td>
-                        <input placeholder="URL to custom Print button image" type="text" name="custom-print-image" value="' . $custom_print_image . '" class="regular-text" />
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">Printed Output: Recipe Permalink</th>
-                    <td><label><input type="checkbox" name="printed-permalink-hide" value="Hide" ' . $printed_permalink_hide . ' /> Don\'t show permalink in printed output</label></td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">Printed Output: Copyright Statement</th>
-                    <td><input type="text" name="printed-copyright-statement" value="' . $printed_copyright_statement . '" class="regular-text" /></td>
-                </tr>
             </table>
             <hr />
             <h3>Ingredients</h3>
@@ -501,7 +527,6 @@ function amd_zlrecipe_settings() {
     </div>';
 }
 
-
 function amd_zlrecipe_tinymce_plugin($plugin_array) {
 	$plugin_array['amdzlrecipe'] = plugins_url( '/zlrecipe_editor_plugin.js?sver=' . AMD_ZLRECIPE_VERSION_NUM, __FILE__ );
 	return $plugin_array;
@@ -513,7 +538,7 @@ function amd_zlrecipe_register_tinymce_button($buttons) {
 }
 
 function amd_zlrecipe_add_recipe_button() {
-
+    global $typenow;
     // check user permissions
     if ( !current_user_can('edit_posts') && !current_user_can('edit_pages') ) {
    	return;
@@ -816,7 +841,7 @@ function amd_zlrecipe_iframe_content($post_info = null, $get_info = null) {
                 <p class="cls"><label>Total Time</label>
                     $total_time_input
                     <span class="time">
-                        <span><input type='number' min="0" max="240" name='total_time_hours' value='$total_time_hours' /><label>hours</label></span>
+                        <span><input type='number' min="0" max="24" name='total_time_hours' value='$total_time_hours' /><label>hours</label></span>
                         <span><input type='number' min="0" max="60" name='total_time_minutes' value='$total_time_minutes' /><label>minutes</label></span>
                     </span>
                 </p>
@@ -1097,7 +1122,7 @@ function amd_zlrecipe_process_head() {
 	// Recipe styling
 	$css = get_option('zlrecipe_stylesheet');
 	if (strcmp($css, '') != 0) {
-		$header_html .= '<link charset="utf-8" href="' . AMD_ZLRECIPE_PLUGIN_DIRECTORY .  $css . '.css" rel="stylesheet" type="text/css" />
+		$header_html .= '<link charset="utf-8" href="' . AMD_ZLRECIPE_PLUGIN_DIRECTORY . '/zlrecipe.css" rel="stylesheet" type="text/css" />
 ';
 	/* Dev Testing	$header_html .= '<link charset="utf-8" href="http://dev.ziplist.com.s3.amazonaws.com/' . $css . '.css" rel="stylesheet" type="text/css" />
 '; */
@@ -1175,13 +1200,24 @@ function amd_zlrecipe_format_recipe($recipe) {
 			$button_type = 'print-link';
 			$button_image = '<img src="' . $custom_print_image . '">';
 		}
-		$output .= '<div class="zlrecipe-print-link fl-r"><a class="' . $button_type . '" title="Print this recipe" href="javascript:void(0);" onclick="zlrPrint(\'zlrecipe-container-' . $recipe->recipe_id . '\', \'' . AMD_ZLRECIPE_PLUGIN_DIRECTORY . '\'); return false">' . $button_image . '</a></div>';
+		$output .= '<div class="zlrecipe-print-link fl-r"><a class="' . $button_type . '" title="Print this recipe" href="javascript:void(0);" onclick="zlrPrint(\'zlrecipe-container-' . $recipe->recipe_id . '\'); return false">' . $button_image . '</a></div>';
 	}
 
     // add the ZipList recipe button
+    $bootstrapcall = '';
     if (strcmp(get_option('ziplist_recipe_button_hide'), 'Hide') != 0) {
-		$output .= '<div id="zl-recipe-link-' . $recipe->recipe_id . '" class="zl-recipe-link fl-r zl-rmvd"></div>';
-	}
+		$ziplist_partner_key = get_option('ziplist_partner_key');
+		$button_image = 'http://asset1.ziplist.com/wk/add_recipe-large.png';
+		$button_type = 'large';
+		$custom_save_image = get_option('zlrecipe_custom_save_image');
+		if (strlen($custom_save_image) > 0) {
+			$button_type = 'custom';
+			$button_image = $custom_save_image;
+		}
+        $output .= '<div id="zl-recipe-link-' . $recipe->recipe_id . '" class="zl-recipe-link fl-r"> <script id="wk_script" src="http://www.zlcdn.com/javascripts/wk.js" type="text/javascript"></script><a class="ziplist-button add-recipe ' . $button_type . '" href="http://www.ziplist.com/webkitchen/button/add_recipe?as_partner=' . $ziplist_partner_key . '&amp;url=' . urlencode($permalink) . '" target="_blank"><img src="' . $button_image . '"></a>
+                </div>';
+		$bootstrapcall = '<script type="text/javascript">wk_bootstrap();</script>';	// used at end of recipe div
+    }
 
 	// add the title and close the item class
 	$hide_tag = '';
@@ -1370,7 +1406,9 @@ function amd_zlrecipe_format_recipe($recipe) {
 
 	}
 
-	// ZipList version
+	// ZipList attribution and version
+    if (strcmp(get_option('ziplist_attribution_hide'), 'Hide') != 0)
+	    $output .= '<div class="zl-linkback">Schema/Recipe SEO Data Markup by <a title="ZipList Recipe Plugin" alt="ZipList Recipe Plugin" href="http://www.ziplist.com/recipe_plugin" target="_blank">ZipList Recipe Plugin</a></div>';
     $output .= '<div class="ziplist-recipe-plugin" style="display: none;">' . AMD_ZLRECIPE_VERSION_NUM . '</div>';
 
     // Add permalink for printed output before closing the innerdiv
@@ -1386,7 +1424,9 @@ function amd_zlrecipe_format_recipe($recipe) {
 		$output .= '<div id="zl-printed-copyright-statement" itemprop="copyrightHolder">' . $printed_copyright_statement . '</div>';
 	}
 
-	$output .= '</div></div>';
+	$output .= '</div>' . $bootstrapcall .
+			'<img id="zlrecipe-beacon" src="http://3po.ziplist.com/wp?url=' . urlencode($permalink) . '" width="0" height="0">
+		</div>';
 
     return $output;
 }
