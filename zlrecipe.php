@@ -1368,9 +1368,7 @@ function amd_zlrecipe_format_recipe($recipe) {
 		$output .= '<div id="zl-printed-copyright-statement" itemprop="copyrightHolder">' . $printed_copyright_statement . '</div>';
 	}
 
-	$output .= '</div>' . $bootstrapcall .
-			'<img id="zlrecipe-beacon" src="http://3po.ziplist.com/wp?url=' . urlencode($permalink) . '" width="0" height="0">
-		</div>';
+	$output .= '</div>' . $bootstrapcall . '</div>';
 
 	return $output;
 }
