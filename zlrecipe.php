@@ -1194,13 +1194,8 @@ function amd_zlrecipe_format_recipe($recipe) {
 	$output .= '	</div><!-- end fl-l -->
 					<div class="fl-l width-50">';
 
-	//!! yield and nutrition
-	if ($recipe->yield != null) {
-		$output .= '<p id="zlrecipe-yield">';
-		if (strcmp(get_option('zlrecipe_yield_label_hide'), 'Hide') != 0) {
-			$output .= get_option('zlrecipe_yield_label') . ' ';
-		}
-		$output .= '<span itemprop="recipeYield">' . $recipe->yield . '</span></p>';
+	if ( $recipe->yield != null ) {
+		$output .= '<p id="zlrecipe-yield">Yield: <span itemprop="recipeYield">' . $recipe->yield . '</span></p>';
 	}
 
 	if ($recipe->serving_size != null || $recipe->calories != null || $recipe->fat != null) {
