@@ -1110,44 +1110,67 @@ function amd_zlrecipe_format_item($item, $elem, $class, $itemprop, $id, $i) {
 	return $output;
 }
 
-// Formats the recipe for output
+/*
+ * Format the recipe output using proper schema.org markup.
+ *
+ * Should contain at least 2 of:
+ *
+ * - image
+ * - at least one of prepTime, cookTime, totalTime, or ingredients
+ * - nutritionInformation
+ * - review
+ *
+ * Example:
+ *
+ * <div itemscope itemtype="http://schema.org/Recipe">
+ *      <h1 itemprop="name">Grandma's Holiday Apple Pie</h1>
+ *      <img itemprop="image" src="apple-pie.jpg" />
+ *      By <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+ *          <span itemprop="name">Carol Smith</span>
+ *      </span>
+ *      Published: <time datetime="2009-11-05" itemprop="datePublished">November 5, 2009</time>
+ *      <span itemprop="description">This is my grandmother's apple pie recipe. I like to add a dash of nutmeg.</span>
+ *      <span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+ *          <span itemprop="ratingValue">4.0</span> stars based on
+ *          <span itemprop="reviewCount">35</span> reviews
+ *      </span>
+ *      Prep time: <time datetime="PT30M" itemprop="prepTime">30 min</time>
+ *      Cook time: <time datetime="PT1H" itemprop="cookTime">1 hour</time>
+ *      Total time: <time datetime="PT1H30M" itemprop="totalTime">1 hour 30 min</time>
+ *      Yield: <span itemprop="recipeYield">1 9" pie (8 servings)</span>
+ *      <span itemprop="nutrition" itemscope itemtype="http://schema.org/NutritionInformation">
+ *          Serving size: <span itemprop="servingSize">1 medium slice</span>
+ *          Calories per serving: <span itemprop="calories">250 cal</span>
+ *          Fat per serving: <span itemprop="fatContent">12 g</span>
+ *      </span>
+ *      Ingredients:
+ *      <span itemprop="recipeIngredient">Thinly-sliced apples: 6 cups</span>
+ *      <span itemprop="recipeIngredient">White sugar: 3/4 cup</span>
+ *      ...
+ *
+ *      Directions:
+ *      <div itemprop="recipeInstructions">
+ *          1. Cut and peel apples
+ *          2. Mix sugar and cinnamon. Use additional sugar for tart apples.
+ *          ...
+ *      </div>
+ * </div>
+ */
 function amd_zlrecipe_format_recipe($recipe) {
-	$output = "";
 	$permalink = get_permalink();
 
-	// Output main recipe div with border style
-	$style_tag = '';
-	$border_style = get_option('zlrecipe_outer_border_style');
-	if ($border_style != null)
-		$style_tag = 'style="border: ' . $border_style . ';"';
-	$output .= '
-	<div id="zlrecipe-container-' . $recipe->recipe_id . '" class="zlrecipe-container-border" ' . $style_tag . '>
-	<div itemscope itemtype="http://schema.org/Recipe" id="zlrecipe-container" class="serif zlrecipe">
-	  <div id="zlrecipe-innerdiv">
-		<div class="item b-b">';
-
-	// Add the print button
-	if (strcmp(get_option('zlrecipe_print_link_hide'), 'Hide') != 0) {
-		$custom_print_image = get_option('zlrecipe_custom_print_image');
-		$button_type = 'butn-link';
-		$button_image = 'Print'; // NOT a button image in this case, but this is the legacy version
-		if (strlen($custom_print_image) > 0) {
-			$button_type = 'print-link';
-			$button_image = '<img src="' . $custom_print_image . '">';
-		}
-		$output .= '<div class="zlrecipe-print-link fl-r"><a class="' . $button_type . '" title="Print this recipe" href="javascript:void(0);" onclick="zlrPrint(\'zlrecipe-container-' . $recipe->recipe_id . '\'); return false">' . $button_image . '</a></div>';
-	}
-
-	// add the title and close the item class
-	$hide_tag = '';
-	if (strcmp(get_option('recipe_title_hide'), 'Hide') == 0)
-		$hide_tag = ' texthide';
-	$output .= '<div id="zlrecipe-title" itemprop="name" class="b-b h-1 strong' . $hide_tag . '" >' . $recipe->recipe_title . '</div>
-	  </div>';
-
-	// open the zlmeta and fl-l container divs
-	$output .= '<div class="zlmeta zlclear">
-	  <div class="fl-l width-50">';
+	$output = '
+	<div id="zlrecipe-container-' . absint( $recipe->recipe_id ) . '" class="zlrecipe-container-border">
+		<div itemscope itemtype="http://schema.org/Recipe" id="zlrecipe-container" class="serif zlrecipe">
+			<div id="zlrecipe-innerdiv">
+				<div class="item b-b">
+					<div class="zlrecipe-print-link fl-r">
+						<a class="butn-link" title="Print this recipe" href="javascript:void(0);" onclick="zlrPrint(\'zlrecipe-container-' . $recipe->recipe_id . '\'); return false">Print</a>
+					</div>
+					<h2 id="zlrecipe-title" itemprop="name" class="b-b h-1 strong" >' . $recipe->recipe_title . '</h2>
+				</div>
+				<div class="zlmeta zlclear">
+					<div class="fl-l width-50">';
 
 	if ($recipe->rating != 0) {
 		$output .= '<p id="zlrecipe-rating" itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">';
