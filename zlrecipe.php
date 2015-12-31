@@ -1350,11 +1350,6 @@ function amd_zlrecipe_format_recipe($recipe) {
 
 	}
 
-	// ZipList attribution and version
-	if (strcmp(get_option('ziplist_attribution_hide'), 'Hide') != 0)
-		$output .= '<div class="zl-linkback">Schema/Recipe SEO Data Markup by <a title="ZipList Recipe Plugin" alt="ZipList Recipe Plugin" href="http://www.ziplist.com/recipe_plugin" target="_blank">ZipList Recipe Plugin</a></div>';
-	$output .= '<div class="ziplist-recipe-plugin" style="display: none;">' . AMD_ZLRECIPE_VERSION_NUM . '</div>';
-
 	// Add permalink for printed output before closing the innerdiv
 	if (strcmp(get_option('zlrecipe_printed_permalink_hide'), 'Hide') != 0) {
 		$output .= '<a id="zl-printed-permalink" href="' . $permalink . '"title="Permalink to Recipe">' . $permalink . '</a>';
