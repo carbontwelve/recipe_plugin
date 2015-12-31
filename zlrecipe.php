@@ -1172,38 +1172,27 @@ function amd_zlrecipe_format_recipe($recipe) {
 				<div class="zlmeta zlclear">
 					<div class="fl-l width-50">';
 
-	// recipe timing
-	if ($recipe->prep_time != null) {
-		$prep_time = amd_zlrecipe_format_duration($recipe->prep_time);
+	if ( $recipe->prep_time != null ) {
+		$prep_time = amd_zlrecipe_format_duration( $recipe->prep_time );
 
-		$output .= '<p id="zlrecipe-prep-time">';
-		if (strcmp(get_option('zlrecipe_prep_time_label_hide'), 'Hide') != 0) {
-			$output .= get_option('zlrecipe_prep_time_label') . ' ';
-		}
-		$output .= '<span itemprop="prepTime" content="' . $recipe->prep_time . '">' . $prep_time . '</span></p>';
+		$output .= '<p id="zlrecipe-prep-time">Prep Time: <time itemprop="prepTime" dateTime="' . $recipe->prep_time . '">' . $prep_time . '</time></p>';
 	}
-	if ($recipe->cook_time != null) {
-		$cook_time = amd_zlrecipe_format_duration($recipe->cook_time);
 
-		$output .= '<p id="zlrecipe-cook-time">';
-		if (strcmp(get_option('zlrecipe_cook_time_label_hide'), 'Hide') != 0) {
-			$output .= get_option('zlrecipe_cook_time_label') . ' ';
-		}
-		$output .= '<span itemprop="cookTime" content="' . $recipe->cook_time . '">' . $cook_time . '</span></p>';
+	if ( $recipe->cook_time != null ) {
+		$cook_time = amd_zlrecipe_format_duration( $recipe->cook_time );
+
+		$output .= '<p id="zlrecipe-cook-time">Cook Time: <time itemprop="cookTime" dateTime="' . $recipe->cook_time . '">' . $cook_time . '</time></p>';
 	}
-	if ($recipe->total_time != null) {
-		$total_time = amd_zlrecipe_format_duration($recipe->total_time);
 
-		$output .= '<p id="zlrecipe-total-time">';
-		if (strcmp(get_option('zlrecipe_total_time_label_hide'), 'Hide') != 0) {
-			$output .= get_option('zlrecipe_total_time_label') . ' ';
-		}
-		$output .= '<span itemprop="totalTime" content="' . $recipe->total_time . '">' . $total_time . '</span></p>';
+	if ( $recipe->total_time != null ) {
+		$total_time = amd_zlrecipe_format_duration( $recipe->total_time );
+
+		$output .= '<p id="zlrecipe-total-time">Total Time: <time itemprop="totalTime" dateTime="' . $recipe->total_time . '">' . $total_time . '</time></p>';
 	}
 
 	//!! close the first container div and open the second
-	$output .= '</div>
-	  <div class="fl-l width-50">';
+	$output .= '	</div><!-- end fl-l -->
+					<div class="fl-l width-50">';
 
 	//!! yield and nutrition
 	if ($recipe->yield != null) {
