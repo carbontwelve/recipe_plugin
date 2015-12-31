@@ -10,9 +10,38 @@
  * Copyright 2011, 2012 ZipList, Inc.
  * */
 
-/* Imports */
-/* The following import is required to produce the ZipList button appearance */
-@import url('https://feedyourskull.com/wp-content/plugins/ziplist-recipe-plugin/generic.css');
+.zl-spacer {
+    display: none;
+}
+
+/* Recipe Format */
+
+.zl-recipe-link a.butn-link {
+    background-color: transparent;
+    display: block;
+    height: 27px;
+    width: 118px;
+    visibility: hidden;
+    pointer-events: none;
+    cursor: default;
+}
+
+.zl-recipe-link a.small-butn-link {
+    background-color: transparent;
+    display: block;
+    height: 20px;
+    width: 91px;
+    visibility: hidden;
+    pointer-events: none;
+    cursor: default;
+}
+
+.zl-offer-link a.butn-link span,
+.zl-recipe-link a.butn-link span,
+.zl-recipe-link a.small-butn-link span {
+    display: none;
+}
+
 
 /* RESETS */
 /* http://meyerweb.com/eric/tools/css/reset/ 
