@@ -482,10 +482,9 @@ function amd_zlrecipe_register_tinymce_button($buttons) {
 }
 
 function amd_zlrecipe_add_recipe_button() {
-	global $typenow;
 	// check user permissions
 	if ( !current_user_can('edit_posts') && !current_user_can('edit_pages') ) {
-	return;
+		return;
 	}
 
 	// check if WYSIWYG is enabled
@@ -495,8 +494,7 @@ function amd_zlrecipe_add_recipe_button() {
 	}
 }
 
-function amd_zlrecipe_strip_chars( $val )
-{
+function amd_zlrecipe_strip_chars( $val ) {
 	return str_replace( '\\', '', $val );
 }
 
@@ -1000,9 +998,7 @@ function amd_zlrecipe_convert_to_recipe($post_text) {
 
 	return $output;
 }
-
-add_filter('the_content', 'amd_zlrecipe_convert_to_recipe');
-//add_filter('the_content', 'amd_zlrecipe_convert_to_recipe', 8);
+add_filter( 'the_content', 'amd_zlrecipe_convert_to_recipe' );
 
 // Pulls a recipe from the db
 function amd_zlrecipe_select_recipe_db($recipe_id) {
