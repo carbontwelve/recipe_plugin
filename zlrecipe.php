@@ -67,16 +67,6 @@ if (strpos($_SERVER['REQUEST_URI'], 'media-upload.php') && strpos($_SERVER['REQU
 	exit;
 }
 
-/* Send debug code to the Javascript console */
-function debug_to_console($data) {
-	if(is_array($data) || is_object($data))
-	{
-		echo("<script>console.log('PHP: ".json_encode($data)."');</script>");
-	} else {
-		echo("<script>console.log('PHP: ".$data."');</script>");
-	}
-}
-
 global $zlrecipe_db_version;
 $zlrecipe_db_version = "3.1";	// This must be changed when the DB structure is modified
 
