@@ -1191,44 +1191,32 @@ function amd_zlrecipe_format_recipe($recipe) {
 	}
 
 	//!! close the first container div and open the second
-	$output .= '	</div><!-- end fl-l -->
-					<div class="fl-l width-50">';
+	$output .= '</div><!-- end fl-l -->
+				<div class="fl-l width-50">';
 
 	if ( $recipe->yield != null ) {
 		$output .= '<p id="zlrecipe-yield">Yield: <span itemprop="recipeYield">' . $recipe->yield . '</span></p>';
 	}
 
-	if ($recipe->serving_size != null || $recipe->calories != null || $recipe->fat != null) {
+	if ( $recipe->serving_size != null || $recipe->calories != null || $recipe->fat != null ) {
 		$output .= '<div id="zlrecipe-nutrition" itemprop="nutrition" itemscope itemtype="http://schema.org/NutritionInformation">';
-		if ($recipe->serving_size != null) {
-			$output .= '<p id="zlrecipe-serving-size">';
-			if (strcmp(get_option('zlrecipe_serving_size_label_hide'), 'Hide') != 0) {
-				$output .= get_option('zlrecipe_serving_size_label') . ' ';
-			}
-			$output .= '<span itemprop="servingSize">' . $recipe->serving_size . '</span></p>';
+
+		if ( $recipe->serving_size != null ) {
+			$output .= '<p id="zlrecipe-serving-size">Serving Size: <span itemprop="servingSize">' . $recipe->serving_size . '</span></p>';
 		}
-		if ($recipe->calories != null) {
-			$output .= '<p id="zlrecipe-calories">';
-			if (strcmp(get_option('zlrecipe_calories_label_hide'), 'Hide') != 0) {
-				$output .= get_option('zlrecipe_calories_label') . ' ';
-			}
-			$output .= '<span itemprop="calories">' . $recipe->calories . '</span></p>';
+
+		if ( $recipe->calories != null ) {
+			$output .= '<p id="zlrecipe-calories">Calories per serving: <span itemprop="calories">' . $recipe->calories . '</span></p>';
 		}
-		if ($recipe->fat != null) {
-			$output .= '<p id="zlrecipe-fat">';
-			if (strcmp(get_option('zlrecipe_fat_label_hide'), 'Hide') != 0) {
-				$output .= get_option('zlrecipe_fat_label') . ' ';
-			}
-			$output .= '<span itemprop="fatContent">' . $recipe->fat . '</span></p>';
+
+		if ( $recipe->fat != null ) {
+			$output .= '<p id="zlrecipe-fat">Fat per serving: <span itemprop="fatContent">' . $recipe->fat . '</span></p>';
 		}
-		$output .= '</div>';
+
+		$output .= '</div><!-- end zlrecipe-nutrition -->';
 	}
 
-	//!! close the second container
-	$output .= '</div>
-	  <div class="zlclear">
-	  </div>
-	</div>';
+	$output .= '</div><div class="zlclear"></div></div><!-- end zl-meta -->';
 
 	//!! create image and summary container
 	if ($recipe->recipe_image != null || $recipe->summary != null) {
