@@ -1172,15 +1172,6 @@ function amd_zlrecipe_format_recipe($recipe) {
 				<div class="zlmeta zlclear">
 					<div class="fl-l width-50">';
 
-	if ($recipe->rating != 0) {
-		$output .= '<p id="zlrecipe-rating" itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">';
-		if (strcmp(get_option('zlrecipe_rating_label_hide'), 'Hide') != 0) {
-			$output .= get_option('zlrecipe_rating_label') . ' ';
-		}
-		$output .= '<span class="rating rating-' . $recipe->rating . '"><span itemprop="ratingValue">' . $recipe->rating . '</span><span itemprop="reviewCount" style="display: none;">1</span></span>
-	   </p>';
-	}
-
 	// recipe timing
 	if ($recipe->prep_time != null) {
 		$prep_time = amd_zlrecipe_format_duration($recipe->prep_time);
