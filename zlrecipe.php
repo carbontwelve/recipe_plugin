@@ -45,47 +45,6 @@ if (!defined('AMD_ZLRECIPE_VERSION_NUM'))
 if (!defined('AMD_ZLRECIPE_PLUGIN_DIRECTORY'))
 	define('AMD_ZLRECIPE_PLUGIN_DIRECTORY', plugins_url() . '/' . dirname(plugin_basename(__FILE__)) . '/');
 
-add_option(AMD_ZLRECIPE_VERSION_KEY, AMD_ZLRECIPE_VERSION_NUM);  // sort of useless as is never updated
-add_option("amd_zlrecipe_db_version"); // used to store DB version
-add_option('ziplist_partner_key', '');
-add_option('ziplist_recipe_button_hide', '');
-add_option('ziplist_attribution_hide', '');
-add_option('zlrecipe_printed_permalink_hide', '');
-add_option('zlrecipe_printed_copyright_statement', '');
-add_option('zlrecipe_stylesheet', 'zlrecipe-std');
-add_option('recipe_title_hide', '');
-add_option('zlrecipe_image_hide', '');
-add_option('zlrecipe_image_hide_print', 'Hide');
-add_option('zlrecipe_print_link_hide', '');
-add_option('zlrecipe_ingredient_label', 'Ingredients');
-add_option('zlrecipe_ingredient_label_hide', '');
-add_option('zlrecipe_ingredient_list_type', 'ul');
-add_option('zlrecipe_instruction_label', 'Instructions');
-add_option('zlrecipe_instruction_label_hide', '');
-add_option('zlrecipe_instruction_list_type', 'ol');
-add_option('zlrecipe_notes_label', 'Notes');
-add_option('zlrecipe_notes_label_hide', '');
-add_option('zlrecipe_prep_time_label', 'Prep Time:');
-add_option('zlrecipe_prep_time_label_hide', '');
-add_option('zlrecipe_cook_time_label', 'Cook Time:');
-add_option('zlrecipe_cook_time_label_hide', '');
-add_option('zlrecipe_total_time_label', 'Total Time:');
-add_option('zlrecipe_total_time_label_hide', '');
-add_option('zlrecipe_yield_label', 'Yield:');
-add_option('zlrecipe_yield_label_hide', '');
-add_option('zlrecipe_serving_size_label', 'Serving Size:');
-add_option('zlrecipe_serving_size_label_hide', '');
-add_option('zlrecipe_calories_label', 'Calories per serving:');
-add_option('zlrecipe_calories_label_hide', '');
-add_option('zlrecipe_fat_label', 'Fat per serving:');
-add_option('zlrecipe_fat_label_hide', '');
-add_option('zlrecipe_rating_label', 'Rating:');
-add_option('zlrecipe_rating_label_hide', '');
-add_option('zlrecipe_image_width', '');
-add_option('zlrecipe_outer_border_style', '');
-add_option('zlrecipe_custom_save_image', '');
-add_option('zlrecipe_custom_print_image', '');
-
 register_activation_hook(__FILE__, 'amd_zlrecipe_install');
 add_action('plugins_loaded', 'amd_zlrecipe_install');
 
