@@ -1058,18 +1058,13 @@ function amd_zlrecipe_format_duration($duration) {
 
 // function to include the javascript for the Add Recipe button
 function amd_zlrecipe_process_head() {
-
 	// Always add the print script
-	$header_html='<script type="text/javascript" async="" src="' . AMD_ZLRECIPE_PLUGIN_DIRECTORY . 'zlrecipe_print.js"></script>
-';
+	$header_html='<script type="text/javascript" async="" src="' . AMD_ZLRECIPE_PLUGIN_DIRECTORY . 'zlrecipe_print.js"></script>';
 
 	// Recipe styling
 	$css = get_option('zlrecipe_stylesheet');
 	if (strcmp($css, '') != 0) {
-		$header_html .= '<link charset="utf-8" href="' . AMD_ZLRECIPE_PLUGIN_DIRECTORY . '/zlrecipe.css" rel="stylesheet" type="text/css" />
-';
-	/* Dev Testing	$header_html .= '<link charset="utf-8" href="http://dev.ziplist.com.s3.amazonaws.com/' . $css . '.css" rel="stylesheet" type="text/css" />
-'; */
+		$header_html .= '<link charset="utf-8" href="' . AMD_ZLRECIPE_PLUGIN_DIRECTORY . '/zlrecipe.css" rel="stylesheet" type="text/css" />';
 	}
 
 	echo $header_html;
