@@ -10,9 +10,38 @@
  * Copyright 2011, 2012 ZipList, Inc.
  * */
 
-/* Imports */
-/* The following import is required to produce the ZipList button appearance */
-@import url('https://feedyourskull.com/wp-content/plugins/ziplist-recipe-plugin/generic.css');
+.zl-spacer {
+    display: none;
+}
+
+/* Recipe Format */
+
+.zl-recipe-link a.butn-link {
+    background-color: transparent;
+    display: block;
+    height: 27px;
+    width: 118px;
+    visibility: hidden;
+    pointer-events: none;
+    cursor: default;
+}
+
+.zl-recipe-link a.small-butn-link {
+    background-color: transparent;
+    display: block;
+    height: 20px;
+    width: 91px;
+    visibility: hidden;
+    pointer-events: none;
+    cursor: default;
+}
+
+.zl-offer-link a.butn-link span,
+.zl-recipe-link a.butn-link span,
+.zl-recipe-link a.small-butn-link span {
+    display: none;
+}
+
 
 /* RESETS */
 /* http://meyerweb.com/eric/tools/css/reset/ 
@@ -125,7 +154,6 @@ footer, #zlrecipe-container header, #zlrecipe-container hgroup, #zlrecipe-contai
 	margin-top: 5px;
 }
 #zlrecipe-container .zlrecipe-print-link .butn-link {
-    background: url("http://ab-assets.ziplist.com.s3.amazonaws.com/print-icon.png") no-repeat scroll 0 1px transparent;
     cursor: pointer;
     padding: 0 0 0 20px;
     display: block;
@@ -142,7 +170,6 @@ footer, #zlrecipe-container header, #zlrecipe-container hgroup, #zlrecipe-contai
 #zlrecipe-container .meta span, #zlrecipe-container .zlmeta span { font-weight: normal; }
 
 #zlrecipe-rating .rating {
-  background: url('http://ab-assets.ziplist.com.s3.amazonaws.com/star-rating.gif') no-repeat scroll 0 0;
   display: inline-block;
   height: 14px;
   text-indent: -9999px;

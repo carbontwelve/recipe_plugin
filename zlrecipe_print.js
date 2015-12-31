@@ -40,8 +40,6 @@ function zlrPrint(id)
 	self.focus();
 	win.document.open();
 	win.document.write('<html><head>');
-	win.document.write('<link charset=\'utf-8\' href=\'https://feedyourskull.com/wp-content/plugins/ziplist-recipe-plugin/generic.css\' rel=\'stylesheet\' type=\'text/css\' />');
-	/* win.document.write('<link charset=\'utf-8\' href=\'http://dev.ziplist.com.s3.amazonaws.com/zlrecipe-print.css\' rel=\'stylesheet\' type=\'text/css\' />'); */
 	win.document.write('</head><body onload="print();">');
 	win.document.write('<div id=\'zlrecipe-print-container\' >');
 	win.document.write(content);
