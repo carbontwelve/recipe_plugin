@@ -1168,9 +1168,18 @@ function amd_zlrecipe_format_recipe($recipe) {
 						<a class="butn-link" title="Print this recipe" href="javascript:void(0);" onclick="zlrPrint(\'zlrecipe-container-' . $recipe->recipe_id . '\'); return false">Print</a>
 					</div>
 					<h2 id="zlrecipe-title" itemprop="name" class="b-b h-1 strong" >' . $recipe->recipe_title . '</h2>
-				</div>
-				<div class="zlmeta zlclear">
+				</div>';
+
+	$output .= '<div class="zlmeta zlclear">
 					<div class="fl-l width-50">';
+
+	if ( fys_recipe_has_recipe_image() ) {
+		$output .='<div class="recipe-image"><img src="' . fys_recipe_get_recipe_image_src( 'medium' ) .'" itemprop="image"></div>';
+	}
+
+	//!! close the first container div and open the second
+	$output .= '</div><!-- end fl-l -->
+				<div class="fl-l width-50">';
 
 	if ( $recipe->prep_time != null ) {
 		$prep_time = amd_zlrecipe_format_duration( $recipe->prep_time );
@@ -1189,10 +1198,6 @@ function amd_zlrecipe_format_recipe($recipe) {
 
 		$output .= '<p id="zlrecipe-total-time">Total Time: <time itemprop="totalTime" dateTime="' . $recipe->total_time . '">' . $total_time . '</time></p>';
 	}
-
-	//!! close the first container div and open the second
-	$output .= '</div><!-- end fl-l -->
-				<div class="fl-l width-50">';
 
 	if ( $recipe->yield != null ) {
 		$output .= '<p id="zlrecipe-yield">Yield: <span itemprop="recipeYield">' . $recipe->yield . '</span></p>';
