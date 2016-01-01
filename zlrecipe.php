@@ -1230,7 +1230,7 @@ function amd_zlrecipe_format_recipe($recipe) {
 	$i = 0;
 	$ingredients = explode( "\n", $recipe->ingredients );
 	foreach ( $ingredients as $ingredient ) {
-		$output .= amd_zlrecipe_format_item( $ingredient, 'li', 'ingredient', 'ingredients', 'zlrecipe-ingredient-', $i);
+		$output .= amd_zlrecipe_format_item( $ingredient, 'li', 'ingredient', 'recipeIngredient', 'zlrecipe-ingredient-', $i);
 		$i++;
 	}
 
