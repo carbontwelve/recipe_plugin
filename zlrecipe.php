@@ -730,6 +730,31 @@ function amd_zlrecipe_break( $otag, $text, $ctag) {
 	return $output;
 }
 
+/**
+ * Process text for a previously fabricated markup for inline "Labels".
+ *
+ * !Label will create a labelfied line item as a div instead of a li because science?
+ */
+function amd_zlrecipe_format_item($item, $elem, $class, $itemprop, $id, $i) {
+
+	if (preg_match("/^!(.*)/", $item, $matches)) {	// LABEL
+		$class .= '-label';
+		$elem = 'div';
+		$item = $matches[1];
+		$output = '<' . $elem . ' id="' . $id . $i . '" class="' . $class . '" >';	// No itemprop for labels
+	} else {
+		if ( '' !== $itemprop ) {
+			$itemprop = 'itemprop="' . $itemprop . '"';
+		}
+		$output = '<' . $elem . ' id="' . $id . $i . '" class="' . $class . '" ' . $itemprop . '>';
+	}
+
+	$output .= amd_zlrecipe_richify_item($item, $class);
+	$output .= '</' . $elem . '>';
+
+	return $output;
+}
+
 /*
  * Format the recipe output using proper schema.org markup.
  *
@@ -855,9 +880,7 @@ function amd_zlrecipe_format_recipe($recipe) {
 	$i = 0;
 	$ingredients = explode( "\n", $recipe->ingredients );
 	foreach ( $ingredients as $ingredient ) {
-		$output .= '<li id="zlrecipe-ingredient-' . $i . '" class="ingredient" itemprop="recipeIngredient">';
-		$output .= amd_zlrecipe_richify_item( $ingredient, 'ingredient' );
-		$output .= '</li>';
+		$output .= amd_zlrecipe_format_item( $ingredient, 'li', 'ingredient', 'recipeIngredient', 'zlrecipe-ingredient-', $i);
 		$i++;
 	}
 
@@ -872,9 +895,7 @@ function amd_zlrecipe_format_recipe($recipe) {
 		$j = 0;
 		foreach ( $instructions as $instruction ) {
 			if ( strlen( $instruction ) > 1 ) {
-				$output .= '<li id="zlrecipe-instruction-' . $j . '" class="instruction">';
-				$output .= amd_zlrecipe_richify_item( $instruction, 'instruction' );
-				$output .= '</li>';
+				$output .= amd_zlrecipe_format_item( $instruction, 'li', 'instruction', '', 'zlrecipe-instruction-', $j);
 				$j++;
 			}
 		}
