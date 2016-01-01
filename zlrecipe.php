@@ -1110,219 +1110,155 @@ function amd_zlrecipe_format_item($item, $elem, $class, $itemprop, $id, $i) {
 	return $output;
 }
 
-// Formats the recipe for output
+/*
+ * Format the recipe output using proper schema.org markup.
+ *
+ * Should contain at least 2 of:
+ *
+ * - image
+ * - at least one of prepTime, cookTime, totalTime, or ingredients
+ * - nutritionInformation
+ * - review
+ *
+ * Example:
+ *
+ * <div itemscope itemtype="http://schema.org/Recipe">
+ *      <h1 itemprop="name">Grandma's Holiday Apple Pie</h1>
+ *      <img itemprop="image" src="apple-pie.jpg" />
+ *      By <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+ *          <span itemprop="name">Carol Smith</span>
+ *      </span>
+ *      Published: <time datetime="2009-11-05" itemprop="datePublished">November 5, 2009</time>
+ *      <span itemprop="description">This is my grandmother's apple pie recipe. I like to add a dash of nutmeg.</span>
+ *      <span itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+ *          <span itemprop="ratingValue">4.0</span> stars based on
+ *          <span itemprop="reviewCount">35</span> reviews
+ *      </span>
+ *      Prep time: <time datetime="PT30M" itemprop="prepTime">30 min</time>
+ *      Cook time: <time datetime="PT1H" itemprop="cookTime">1 hour</time>
+ *      Total time: <time datetime="PT1H30M" itemprop="totalTime">1 hour 30 min</time>
+ *      Yield: <span itemprop="recipeYield">1 9" pie (8 servings)</span>
+ *      <span itemprop="nutrition" itemscope itemtype="http://schema.org/NutritionInformation">
+ *          Serving size: <span itemprop="servingSize">1 medium slice</span>
+ *          Calories per serving: <span itemprop="calories">250 cal</span>
+ *          Fat per serving: <span itemprop="fatContent">12 g</span>
+ *      </span>
+ *      Ingredients:
+ *      <span itemprop="recipeIngredient">Thinly-sliced apples: 6 cups</span>
+ *      <span itemprop="recipeIngredient">White sugar: 3/4 cup</span>
+ *      ...
+ *
+ *      Directions:
+ *      <div itemprop="recipeInstructions">
+ *          1. Cut and peel apples
+ *          2. Mix sugar and cinnamon. Use additional sugar for tart apples.
+ *          ...
+ *      </div>
+ * </div>
+ */
 function amd_zlrecipe_format_recipe($recipe) {
-	$output = "";
 	$permalink = get_permalink();
 
-	// Output main recipe div with border style
-	$style_tag = '';
-	$border_style = get_option('zlrecipe_outer_border_style');
-	if ($border_style != null)
-		$style_tag = 'style="border: ' . $border_style . ';"';
-	$output .= '
-	<div id="zlrecipe-container-' . $recipe->recipe_id . '" class="zlrecipe-container-border" ' . $style_tag . '>
-	<div itemscope itemtype="http://schema.org/Recipe" id="zlrecipe-container" class="serif zlrecipe">
-	  <div id="zlrecipe-innerdiv">
-		<div class="item b-b">';
+	$output = '
+	<div id="zlrecipe-container-' . absint( $recipe->recipe_id ) . '" class="zlrecipe-container-border">
+		<div itemscope itemtype="http://schema.org/Recipe" id="zlrecipe-container" class="serif zlrecipe">
+			<div id="zlrecipe-innerdiv">
+				<div class="item b-b">
+					<div class="zlrecipe-print-link fl-r">
+						<a class="butn-link" title="Print this recipe" href="javascript:void(0);" onclick="zlrPrint(\'zlrecipe-container-' . $recipe->recipe_id . '\'); return false">Print</a>
+					</div>
+					<h2 id="zlrecipe-title" itemprop="name" class="b-b h-1 strong" >' . $recipe->recipe_title . '</h2>
+				</div>
+				<div class="zlmeta zlclear">
+					<div class="fl-l width-50">';
 
-	// Add the print button
-	if (strcmp(get_option('zlrecipe_print_link_hide'), 'Hide') != 0) {
-		$custom_print_image = get_option('zlrecipe_custom_print_image');
-		$button_type = 'butn-link';
-		$button_image = 'Print'; // NOT a button image in this case, but this is the legacy version
-		if (strlen($custom_print_image) > 0) {
-			$button_type = 'print-link';
-			$button_image = '<img src="' . $custom_print_image . '">';
-		}
-		$output .= '<div class="zlrecipe-print-link fl-r"><a class="' . $button_type . '" title="Print this recipe" href="javascript:void(0);" onclick="zlrPrint(\'zlrecipe-container-' . $recipe->recipe_id . '\'); return false">' . $button_image . '</a></div>';
+	if ( $recipe->prep_time != null ) {
+		$prep_time = amd_zlrecipe_format_duration( $recipe->prep_time );
+
+		$output .= '<p id="zlrecipe-prep-time">Prep Time: <time itemprop="prepTime" dateTime="' . $recipe->prep_time . '">' . $prep_time . '</time></p>';
 	}
 
-	// add the title and close the item class
-	$hide_tag = '';
-	if (strcmp(get_option('recipe_title_hide'), 'Hide') == 0)
-		$hide_tag = ' texthide';
-	$output .= '<div id="zlrecipe-title" itemprop="name" class="b-b h-1 strong' . $hide_tag . '" >' . $recipe->recipe_title . '</div>
-	  </div>';
+	if ( $recipe->cook_time != null ) {
+		$cook_time = amd_zlrecipe_format_duration( $recipe->cook_time );
 
-	// open the zlmeta and fl-l container divs
-	$output .= '<div class="zlmeta zlclear">
-	  <div class="fl-l width-50">';
-
-	if ($recipe->rating != 0) {
-		$output .= '<p id="zlrecipe-rating" itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">';
-		if (strcmp(get_option('zlrecipe_rating_label_hide'), 'Hide') != 0) {
-			$output .= get_option('zlrecipe_rating_label') . ' ';
-		}
-		$output .= '<span class="rating rating-' . $recipe->rating . '"><span itemprop="ratingValue">' . $recipe->rating . '</span><span itemprop="reviewCount" style="display: none;">1</span></span>
-	   </p>';
+		$output .= '<p id="zlrecipe-cook-time">Cook Time: <time itemprop="cookTime" dateTime="' . $recipe->cook_time . '">' . $cook_time . '</time></p>';
 	}
 
-	// recipe timing
-	if ($recipe->prep_time != null) {
-		$prep_time = amd_zlrecipe_format_duration($recipe->prep_time);
+	if ( $recipe->total_time != null ) {
+		$total_time = amd_zlrecipe_format_duration( $recipe->total_time );
 
-		$output .= '<p id="zlrecipe-prep-time">';
-		if (strcmp(get_option('zlrecipe_prep_time_label_hide'), 'Hide') != 0) {
-			$output .= get_option('zlrecipe_prep_time_label') . ' ';
-		}
-		$output .= '<span itemprop="prepTime" content="' . $recipe->prep_time . '">' . $prep_time . '</span></p>';
-	}
-	if ($recipe->cook_time != null) {
-		$cook_time = amd_zlrecipe_format_duration($recipe->cook_time);
-
-		$output .= '<p id="zlrecipe-cook-time">';
-		if (strcmp(get_option('zlrecipe_cook_time_label_hide'), 'Hide') != 0) {
-			$output .= get_option('zlrecipe_cook_time_label') . ' ';
-		}
-		$output .= '<span itemprop="cookTime" content="' . $recipe->cook_time . '">' . $cook_time . '</span></p>';
-	}
-	if ($recipe->total_time != null) {
-		$total_time = amd_zlrecipe_format_duration($recipe->total_time);
-
-		$output .= '<p id="zlrecipe-total-time">';
-		if (strcmp(get_option('zlrecipe_total_time_label_hide'), 'Hide') != 0) {
-			$output .= get_option('zlrecipe_total_time_label') . ' ';
-		}
-		$output .= '<span itemprop="totalTime" content="' . $recipe->total_time . '">' . $total_time . '</span></p>';
+		$output .= '<p id="zlrecipe-total-time">Total Time: <time itemprop="totalTime" dateTime="' . $recipe->total_time . '">' . $total_time . '</time></p>';
 	}
 
 	//!! close the first container div and open the second
-	$output .= '</div>
-	  <div class="fl-l width-50">';
+	$output .= '</div><!-- end fl-l -->
+				<div class="fl-l width-50">';
 
-	//!! yield and nutrition
-	if ($recipe->yield != null) {
-		$output .= '<p id="zlrecipe-yield">';
-		if (strcmp(get_option('zlrecipe_yield_label_hide'), 'Hide') != 0) {
-			$output .= get_option('zlrecipe_yield_label') . ' ';
-		}
-		$output .= '<span itemprop="recipeYield">' . $recipe->yield . '</span></p>';
+	if ( $recipe->yield != null ) {
+		$output .= '<p id="zlrecipe-yield">Yield: <span itemprop="recipeYield">' . $recipe->yield . '</span></p>';
 	}
 
-	if ($recipe->serving_size != null || $recipe->calories != null || $recipe->fat != null) {
+	if ( $recipe->serving_size != null || $recipe->calories != null || $recipe->fat != null ) {
 		$output .= '<div id="zlrecipe-nutrition" itemprop="nutrition" itemscope itemtype="http://schema.org/NutritionInformation">';
-		if ($recipe->serving_size != null) {
-			$output .= '<p id="zlrecipe-serving-size">';
-			if (strcmp(get_option('zlrecipe_serving_size_label_hide'), 'Hide') != 0) {
-				$output .= get_option('zlrecipe_serving_size_label') . ' ';
-			}
-			$output .= '<span itemprop="servingSize">' . $recipe->serving_size . '</span></p>';
+
+		if ( $recipe->serving_size != null ) {
+			$output .= '<p id="zlrecipe-serving-size">Serving Size: <span itemprop="servingSize">' . $recipe->serving_size . '</span></p>';
 		}
-		if ($recipe->calories != null) {
-			$output .= '<p id="zlrecipe-calories">';
-			if (strcmp(get_option('zlrecipe_calories_label_hide'), 'Hide') != 0) {
-				$output .= get_option('zlrecipe_calories_label') . ' ';
-			}
-			$output .= '<span itemprop="calories">' . $recipe->calories . '</span></p>';
+
+		if ( $recipe->calories != null ) {
+			$output .= '<p id="zlrecipe-calories">Calories per serving: <span itemprop="calories">' . $recipe->calories . '</span></p>';
 		}
-		if ($recipe->fat != null) {
-			$output .= '<p id="zlrecipe-fat">';
-			if (strcmp(get_option('zlrecipe_fat_label_hide'), 'Hide') != 0) {
-				$output .= get_option('zlrecipe_fat_label') . ' ';
-			}
-			$output .= '<span itemprop="fatContent">' . $recipe->fat . '</span></p>';
+
+		if ( $recipe->fat != null ) {
+			$output .= '<p id="zlrecipe-fat">Fat per serving: <span itemprop="fatContent">' . $recipe->fat . '</span></p>';
 		}
+
+		$output .= '</div><!-- end zlrecipe-nutrition -->';
+	}
+
+	$output .= '</div><div class="zlclear"></div></div><!-- end zl-meta -->';
+
+	if ( $recipe->summary != null ) {
+		$output .= '<div id="zlrecipe-summary" itemprop="description">';
+		$output .= amd_zlrecipe_break( '<p class="summary italic">', amd_zlrecipe_richify_item($recipe->summary, 'summary'), '</p>' );
 		$output .= '</div>';
 	}
 
-	//!! close the second container
-	$output .= '</div>
-	  <div class="zlclear">
-	  </div>
-	</div>';
+	$output .= '<p id="zlrecipe-ingredients" class="h-4 strong">Ingredients</p>';
+	$output .= '<ul id=zlrecipe-ingredients-list">';
 
-	//!! create image and summary container
-	if ($recipe->recipe_image != null || $recipe->summary != null) {
-		$output .= '<div class="img-desc-wrap">';
-		if ($recipe->recipe_image != null) {
-			$style_tag = '';
-			$class_tag = '';
-			$image_width = get_option('zlrecipe_image_width');
-			if ($image_width != null) {
-				$style_tag = 'style="width: ' . $image_width . 'px;"';
-			}
-			if (strcmp(get_option('zlrecipe_image_hide'), 'Hide') == 0)
-				$class_tag .= ' hide-card';
-			if (strcmp(get_option('zlrecipe_image_hide_print'), 'Hide') == 0)
-				$class_tag .= ' hide-print';
-			$output .= '<p class="t-a-c' . $class_tag . '">
-			  <img class="photo" itemprop="image" src="' . $recipe->recipe_image . '" title="' . $recipe->recipe_title . '" alt="' . $recipe->recipe_title . '" ' . $style_tag . ' />
-			</p>';
-		}
-		if ($recipe->summary != null) {
-			$output .= '<div id="zlrecipe-summary" itemprop="description">';
-			$output .= amd_zlrecipe_break( '<p class="summary italic">', amd_zlrecipe_richify_item($recipe->summary, 'summary'), '</p>' );
-			$output .= '</div>';
-		}
-		$output .= '</div>';
-	}
-
-	$ingredient_type= '';
-	$ingredient_tag = '';
-	$ingredient_class = '';
-	$ingredient_list_type_option = get_option('zlrecipe_ingredient_list_type');
-	if (strcmp($ingredient_list_type_option, 'ul') == 0 || strcmp($ingredient_list_type_option, 'ol') == 0) {
-		$ingredient_type = $ingredient_list_type_option;
-		$ingredient_tag = 'li';
-	} else if (strcmp($ingredient_list_type_option, 'p') == 0 || strcmp($ingredient_list_type_option, 'div') == 0) {
-		$ingredient_type = 'span';
-		$ingredient_tag = $ingredient_list_type_option;
-	}
-
-	if (strcmp(get_option('zlrecipe_ingredient_label_hide'), 'Hide') != 0) {
-		$output .= '<p id="zlrecipe-ingredients" class="h-4 strong">' . get_option('zlrecipe_ingredient_label') . '</p>';
-	}
-
-	$output .= '<' . $ingredient_type . ' id="zlrecipe-ingredients-list">';
 	$i = 0;
-	$ingredients = explode("\n", $recipe->ingredients);
-	foreach ($ingredients as $ingredient) {
-		$output .= amd_zlrecipe_format_item($ingredient, $ingredient_tag, 'ingredient', 'ingredients', 'zlrecipe-ingredient-', $i);
+	$ingredients = explode( "\n", $recipe->ingredients );
+	foreach ( $ingredients as $ingredient ) {
+		$output .= amd_zlrecipe_format_item( $ingredient, 'li', 'ingredient', 'recipeIngredient', 'zlrecipe-ingredient-', $i);
 		$i++;
 	}
 
-	$output .= '</' . $ingredient_type . '>';
+	$output .= '</ul>';
 
-	// add the instructions
-	if ($recipe->instructions != null) {
+	if ( $recipe->instructions != null ) {
+		$instructions = explode( "\n", $recipe->instructions );
 
-		$instruction_type= '';
-		$instruction_tag = '';
-		$instruction_list_type_option = get_option('zlrecipe_instruction_list_type');
-		if (strcmp($instruction_list_type_option, 'ul') == 0 || strcmp($instruction_list_type_option, 'ol') == 0) {
-			$instruction_type = $instruction_list_type_option;
-			$instruction_tag = 'li';
-		} else if (strcmp($instruction_list_type_option, 'p') == 0 || strcmp($instruction_list_type_option, 'div') == 0) {
-			$instruction_type = 'span';
-			$instruction_tag = $instruction_list_type_option;
-		}
+		$output .= '<p id="zlrecipe-instructions" class="h-4 strong">Instructions</p>';
+		$output .= '<ol id="zlrecipe-instructions-list" class="instructions" itemprop="recipeInstructions">';
 
-		$instructions = explode("\n", $recipe->instructions);
-		if (strcmp(get_option('zlrecipe_instruction_label_hide'), 'Hide') != 0) {
-			$output .= '<p id="zlrecipe-instructions" class="h-4 strong">' . get_option('zlrecipe_instruction_label') . '</p>';
-		}
-		$output .= '<' . $instruction_type . ' id="zlrecipe-instructions-list" class="instructions">';
 		$j = 0;
-		foreach ($instructions as $instruction) {
-			if (strlen($instruction) > 1) {
-				$output .= amd_zlrecipe_format_item($instruction, $instruction_tag, 'instruction', 'recipeInstructions', 'zlrecipe-instruction-', $j);
+		foreach ( $instructions as $instruction ) {
+			if ( strlen( $instruction ) > 1 ) {
+				$output .= '<li id="zlrecipe-instruction-' . $j . '" class="instruction">';
+				$output .= amd_zlrecipe_richify_item( $instruction, 'instruction' );
+				$output .= '</li>';
 				$j++;
 			}
 		}
-		$output .= '</' . $instruction_type . '>';
+		$output .= '</ol>';
 	}
 
-	//!! add notes section
-	if ($recipe->notes != null) {
-		if (strcmp(get_option('zlrecipe_notes_label_hide'), 'Hide') != 0) {
-			$output .= '<p id="zlrecipe-notes" class="h-4 strong">' . get_option('zlrecipe_notes_label') . '</p>';
-		}
-
+	if ( $recipe->notes != null ) {
+		$output .= '<p id="zlrecipe-notes" class="h-4 strong">Notes</p>';
 		$output .= '<div id="zlrecipe-notes-list">';
-		$output .= amd_zlrecipe_break( '<p class="notes">', amd_zlrecipe_richify_item($recipe->notes, 'notes'), '</p>' );
+		$output .= amd_zlrecipe_break( '<p class="notes">', amd_zlrecipe_richify_item( $recipe->notes, 'notes' ), '</p>' );
 		$output .= '</div>';
-
 	}
 
 	// Add permalink for printed output before closing the innerdiv
