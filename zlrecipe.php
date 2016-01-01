@@ -730,6 +730,31 @@ function amd_zlrecipe_break( $otag, $text, $ctag) {
 	return $output;
 }
 
+// Processes markup for attributes like labels, images and links
+// !Label
+// %image
+function amd_zlrecipe_format_item($item, $elem, $class, $itemprop, $id, $i) {
+
+	if (preg_match("/^%(\S*)/", $item, $matches)) {	// IMAGE Updated to only pull non-whitespace after some blogs were adding additional returns to the output
+		$output = '<img class = "' . $class . '-image" src="' . $matches[1] . '" />';
+		return $output; // Images don't also have labels or links so return the line immediately.
+	}
+
+	if (preg_match("/^!(.*)/", $item, $matches)) {	// LABEL
+		$class .= '-label';
+		$elem = 'div';
+		$item = $matches[1];
+		$output = '<' . $elem . ' id="' . $id . $i . '" class="' . $class . '" >';	// No itemprop for labels
+	} else {
+		$output = '<' . $elem . ' id="' . $id . $i . '" class="' . $class . '" itemprop="' . $itemprop . '">';
+	}
+
+	$output .= amd_zlrecipe_richify_item($item, $class);
+	$output .= '</' . $elem . '>';
+
+	return $output;
+}
+
 /*
  * Format the recipe output using proper schema.org markup.
  *
@@ -855,9 +880,7 @@ function amd_zlrecipe_format_recipe($recipe) {
 	$i = 0;
 	$ingredients = explode( "\n", $recipe->ingredients );
 	foreach ( $ingredients as $ingredient ) {
-		$output .= '<li id="zlrecipe-ingredient-' . $i . '" class="ingredient" itemprop="recipeIngredient">';
-		$output .= amd_zlrecipe_richify_item( $ingredient, 'ingredient' );
-		$output .= '</li>';
+		$output .= amd_zlrecipe_format_item( $ingredient, 'li', 'ingredient', 'recipeIngredient', 'zlrecipe-ingredient-', $i);
 		$i++;
 	}
 
