@@ -1254,16 +1254,11 @@ function amd_zlrecipe_format_recipe($recipe) {
 		$output .= '</ol>';
 	}
 
-	//!! add notes section
-	if ($recipe->notes != null) {
-		if (strcmp(get_option('zlrecipe_notes_label_hide'), 'Hide') != 0) {
-			$output .= '<p id="zlrecipe-notes" class="h-4 strong">' . get_option('zlrecipe_notes_label') . '</p>';
-		}
-
+	if ( $recipe->notes != null ) {
+		$output .= '<p id="zlrecipe-notes" class="h-4 strong">Notes</p>';
 		$output .= '<div id="zlrecipe-notes-list">';
-		$output .= amd_zlrecipe_break( '<p class="notes">', amd_zlrecipe_richify_item($recipe->notes, 'notes'), '</p>' );
+		$output .= amd_zlrecipe_break( '<p class="notes">', amd_zlrecipe_richify_item( $recipe->notes, 'notes' ), '</p>' );
 		$output .= '</div>';
-
 	}
 
 	// Add permalink for printed output before closing the innerdiv
