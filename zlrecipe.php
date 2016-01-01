@@ -1278,3 +1278,45 @@ function amd_zlrecipe_format_recipe($recipe) {
 
 	return $output;
 }
+
+add_action( 'after_setup_theme', 'fys_recipe_register_images' );
+/**
+ * When Multiple Post Thumbnails is an active plugin, register an additional post
+ * thumbail for Recipe Image to be used in a recipe and its metadata.
+ */
+function fys_recipe_register_images() {
+	if ( class_exists( 'MultiPostThumbnails' ) ) {
+		$image_args = array(
+			'label' => 'Recipe Image',
+			'id' => 'recipe-image',
+			'post_type' => 'post',
+		);
+		new MultiPostThumbnails( $image_args );
+	}
+}
+
+/**
+ * Determine if a post has an associated recipe image.
+ *
+ * @return bool
+ */
+function fys_recipe_has_recipe_image() {
+	if ( class_exists( 'MultiPostThumbnails' ) ) {
+		return MultiPostThumbnails::has_post_thumbnail( get_post_type(), 'recipe-image' );
+	}
+	return false;
+}
+
+/**
+ * Return a recipe image assigned to a post.
+ *
+ * @param null $size
+ *
+ * @return bool|mixed
+ */
+function fys_recipe_get_recipe_image_src( $size = null ) {
+	if ( class_exists( 'MultiPostThumbnails' ) ) {
+		return MultiPostThumbnails::get_post_thumbnail_url( get_post_type(), 'recipe-image', get_the_ID(), $size );
+	}
+	return false;
+}
