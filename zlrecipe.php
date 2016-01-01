@@ -704,13 +704,13 @@ function fys_recipe_enqueue_styles() {
 	wp_enqueue_style( 'fys-recipe-css', plugins_url( '/zlrecipe.min.css', __FILE__ ), array(), false );
 }
 
-// function to include the javascript for the Add Recipe button
-function amd_zlrecipe_process_head() {
-	// Always add the print script
-	$header_html='<script type="text/javascript" async="" src="' . AMD_ZLRECIPE_PLUGIN_DIRECTORY . 'zlrecipe_print.js"></script>';
-	echo $header_html;
+add_action( 'wp_enqueue_scripts', 'fys_recipe_enqueue_scripts', 10 );
+/**
+ * Enqueue the JS used to trigger a print view for recipe cards in the post.
+ */
+function fys_recipe_enqueue_scripts() {
+	wp_enqueue_script( 'fys-recipe-print', plugins_url( '/zlrecipe_print.js', __FILE__ ), array(), false, true );
 }
-add_filter('wp_head', 'amd_zlrecipe_process_head');
 
 // Replaces the [a|b] pattern with text a that links to b
 // Replaces _words_ with an italic span and *words* with a bold span
