@@ -1236,33 +1236,22 @@ function amd_zlrecipe_format_recipe($recipe) {
 
 	$output .= '</ul>';
 
-	// add the instructions
-	if ($recipe->instructions != null) {
+	if ( $recipe->instructions != null ) {
+		$instructions = explode( "\n", $recipe->instructions );
 
-		$instruction_type= '';
-		$instruction_tag = '';
-		$instruction_list_type_option = get_option('zlrecipe_instruction_list_type');
-		if (strcmp($instruction_list_type_option, 'ul') == 0 || strcmp($instruction_list_type_option, 'ol') == 0) {
-			$instruction_type = $instruction_list_type_option;
-			$instruction_tag = 'li';
-		} else if (strcmp($instruction_list_type_option, 'p') == 0 || strcmp($instruction_list_type_option, 'div') == 0) {
-			$instruction_type = 'span';
-			$instruction_tag = $instruction_list_type_option;
-		}
+		$output .= '<p id="zlrecipe-instructions" class="h-4 strong">Instructions</p>';
+		$output .= '<ol id="zlrecipe-instructions-list" class="instructions" itemprop="recipeInstructions">';
 
-		$instructions = explode("\n", $recipe->instructions);
-		if (strcmp(get_option('zlrecipe_instruction_label_hide'), 'Hide') != 0) {
-			$output .= '<p id="zlrecipe-instructions" class="h-4 strong">' . get_option('zlrecipe_instruction_label') . '</p>';
-		}
-		$output .= '<' . $instruction_type . ' id="zlrecipe-instructions-list" class="instructions">';
 		$j = 0;
-		foreach ($instructions as $instruction) {
-			if (strlen($instruction) > 1) {
-				$output .= amd_zlrecipe_format_item($instruction, $instruction_tag, 'instruction', 'recipeInstructions', 'zlrecipe-instruction-', $j);
+		foreach ( $instructions as $instruction ) {
+			if ( strlen( $instruction ) > 1 ) {
+				$output .= '<li id="zlrecipe-instruction-' . $j . '" class="instruction">';
+				$output .= amd_zlrecipe_richify_item( $instruction, 'instruction' );
+				$output .= '</li>';
 				$j++;
 			}
 		}
-		$output .= '</' . $instruction_type . '>';
+		$output .= '</ol>';
 	}
 
 	//!! add notes section
