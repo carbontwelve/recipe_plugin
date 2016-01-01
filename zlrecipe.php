@@ -1224,31 +1224,17 @@ function amd_zlrecipe_format_recipe($recipe) {
 		$output .= '</div>';
 	}
 
-	$ingredient_type= '';
-	$ingredient_tag = '';
-	$ingredient_class = '';
-	$ingredient_list_type_option = get_option('zlrecipe_ingredient_list_type');
-	if (strcmp($ingredient_list_type_option, 'ul') == 0 || strcmp($ingredient_list_type_option, 'ol') == 0) {
-		$ingredient_type = $ingredient_list_type_option;
-		$ingredient_tag = 'li';
-	} else if (strcmp($ingredient_list_type_option, 'p') == 0 || strcmp($ingredient_list_type_option, 'div') == 0) {
-		$ingredient_type = 'span';
-		$ingredient_tag = $ingredient_list_type_option;
-	}
+	$output .= '<p id="zlrecipe-ingredients" class="h-4 strong">Ingredients</p>';
+	$output .= '<ul id=zlrecipe-ingredients-list">';
 
-	if (strcmp(get_option('zlrecipe_ingredient_label_hide'), 'Hide') != 0) {
-		$output .= '<p id="zlrecipe-ingredients" class="h-4 strong">' . get_option('zlrecipe_ingredient_label') . '</p>';
-	}
-
-	$output .= '<' . $ingredient_type . ' id="zlrecipe-ingredients-list">';
 	$i = 0;
-	$ingredients = explode("\n", $recipe->ingredients);
-	foreach ($ingredients as $ingredient) {
-		$output .= amd_zlrecipe_format_item($ingredient, $ingredient_tag, 'ingredient', 'ingredients', 'zlrecipe-ingredient-', $i);
+	$ingredients = explode( "\n", $recipe->ingredients );
+	foreach ( $ingredients as $ingredient ) {
+		$output .= amd_zlrecipe_format_item( $ingredient, 'li', 'ingredient', 'ingredients', 'zlrecipe-ingredient-', $i);
 		$i++;
 	}
 
-	$output .= '</' . $ingredient_type . '>';
+	$output .= '</ul>';
 
 	// add the instructions
 	if ($recipe->instructions != null) {
