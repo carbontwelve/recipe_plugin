@@ -1218,29 +1218,9 @@ function amd_zlrecipe_format_recipe($recipe) {
 
 	$output .= '</div><div class="zlclear"></div></div><!-- end zl-meta -->';
 
-	//!! create image and summary container
-	if ($recipe->recipe_image != null || $recipe->summary != null) {
-		$output .= '<div class="img-desc-wrap">';
-		if ($recipe->recipe_image != null) {
-			$style_tag = '';
-			$class_tag = '';
-			$image_width = get_option('zlrecipe_image_width');
-			if ($image_width != null) {
-				$style_tag = 'style="width: ' . $image_width . 'px;"';
-			}
-			if (strcmp(get_option('zlrecipe_image_hide'), 'Hide') == 0)
-				$class_tag .= ' hide-card';
-			if (strcmp(get_option('zlrecipe_image_hide_print'), 'Hide') == 0)
-				$class_tag .= ' hide-print';
-			$output .= '<p class="t-a-c' . $class_tag . '">
-			  <img class="photo" itemprop="image" src="' . $recipe->recipe_image . '" title="' . $recipe->recipe_title . '" alt="' . $recipe->recipe_title . '" ' . $style_tag . ' />
-			</p>';
-		}
-		if ($recipe->summary != null) {
-			$output .= '<div id="zlrecipe-summary" itemprop="description">';
-			$output .= amd_zlrecipe_break( '<p class="summary italic">', amd_zlrecipe_richify_item($recipe->summary, 'summary'), '</p>' );
-			$output .= '</div>';
-		}
+	if ( $recipe->summary != null ) {
+		$output .= '<div id="zlrecipe-summary" itemprop="description">';
+		$output .= amd_zlrecipe_break( '<p class="summary italic">', amd_zlrecipe_richify_item($recipe->summary, 'summary'), '</p>' );
 		$output .= '</div>';
 	}
 
