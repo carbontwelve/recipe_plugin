@@ -730,15 +730,12 @@ function amd_zlrecipe_break( $otag, $text, $ctag) {
 	return $output;
 }
 
-// Processes markup for attributes like labels, images and links
-// !Label
-// %image
+/**
+ * Process text for a previously fabricated markup for inline "Labels".
+ *
+ * !Label will create a labelfied line item as a div instead of a li because science?
+ */
 function amd_zlrecipe_format_item($item, $elem, $class, $itemprop, $id, $i) {
-
-	if (preg_match("/^%(\S*)/", $item, $matches)) {	// IMAGE Updated to only pull non-whitespace after some blogs were adding additional returns to the output
-		$output = '<img class = "' . $class . '-image" src="' . $matches[1] . '" />';
-		return $output; // Images don't also have labels or links so return the line immediately.
-	}
 
 	if (preg_match("/^!(.*)/", $item, $matches)) {	// LABEL
 		$class .= '-label';
@@ -746,7 +743,10 @@ function amd_zlrecipe_format_item($item, $elem, $class, $itemprop, $id, $i) {
 		$item = $matches[1];
 		$output = '<' . $elem . ' id="' . $id . $i . '" class="' . $class . '" >';	// No itemprop for labels
 	} else {
-		$output = '<' . $elem . ' id="' . $id . $i . '" class="' . $class . '" itemprop="' . $itemprop . '">';
+		if ( '' !== $itemprop ) {
+			$itemprop = 'itemprop="' . $itemprop . '"';
+		}
+		$output = '<' . $elem . ' id="' . $id . $i . '" class="' . $class . '" ' . $itemprop . '>';
 	}
 
 	$output .= amd_zlrecipe_richify_item($item, $class);
@@ -895,9 +895,7 @@ function amd_zlrecipe_format_recipe($recipe) {
 		$j = 0;
 		foreach ( $instructions as $instruction ) {
 			if ( strlen( $instruction ) > 1 ) {
-				$output .= '<li id="zlrecipe-instruction-' . $j . '" class="instruction">';
-				$output .= amd_zlrecipe_richify_item( $instruction, 'instruction' );
-				$output .= '</li>';
+				$output .= amd_zlrecipe_format_item( $instruction, 'li', 'instruction', '', 'zlrecipe-instruction-', $j);
 				$j++;
 			}
 		}
