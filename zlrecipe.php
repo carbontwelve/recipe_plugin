@@ -696,12 +696,18 @@ function amd_zlrecipe_format_duration($duration) {
 	return $result;
 }
 
+add_action( 'wp_enqueue_scripts', 'fys_recipe_enqueue_styles', 40 );
+/**
+ * Enqueue the CSS used for recipes in posts.
+ */
+function fys_recipe_enqueue_styles() {
+	wp_enqueue_style( 'fys-recipe-css', plugins_url( '/zlrecipe.min.css', __FILE__ ), array(), false );
+}
+
 // function to include the javascript for the Add Recipe button
 function amd_zlrecipe_process_head() {
 	// Always add the print script
 	$header_html='<script type="text/javascript" async="" src="' . AMD_ZLRECIPE_PLUGIN_DIRECTORY . 'zlrecipe_print.js"></script>';
-	$header_html .= '<link charset="utf-8" href="' . AMD_ZLRECIPE_PLUGIN_DIRECTORY . '/zlrecipe.css" rel="stylesheet" type="text/css" />';
-
 	echo $header_html;
 }
 add_filter('wp_head', 'amd_zlrecipe_process_head');
