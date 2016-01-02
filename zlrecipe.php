@@ -824,46 +824,49 @@ function amd_zlrecipe_format_recipe($recipe) {
 
 	//!! close the first container div and open the second
 	$output .= '</div><!-- end fl-l -->
-				<div class="fl-l width-50">';
+				<div class="fl-l width-50">
+					<ul class="recipe-meta">';
 
 	if ( $recipe->prep_time != null ) {
 		$prep_time = amd_zlrecipe_format_duration( $recipe->prep_time );
 
-		$output .= '<p id="zlrecipe-prep-time">Prep Time: <time itemprop="prepTime" dateTime="' . $recipe->prep_time . '">' . $prep_time . '</time></p>';
+		$output .= '<li id="zlrecipe-prep-time">Prep Time: <time itemprop="prepTime" dateTime="' . $recipe->prep_time . '">' . $prep_time . '</time></li>';
 	}
 
 	if ( $recipe->cook_time != null ) {
 		$cook_time = amd_zlrecipe_format_duration( $recipe->cook_time );
 
-		$output .= '<p id="zlrecipe-cook-time">Cook Time: <time itemprop="cookTime" dateTime="' . $recipe->cook_time . '">' . $cook_time . '</time></p>';
+		$output .= '<li id="zlrecipe-cook-time">Cook Time: <time itemprop="cookTime" dateTime="' . $recipe->cook_time . '">' . $cook_time . '</time></li>';
 	}
 
 	if ( $recipe->total_time != null ) {
 		$total_time = amd_zlrecipe_format_duration( $recipe->total_time );
 
-		$output .= '<p id="zlrecipe-total-time">Total Time: <time itemprop="totalTime" dateTime="' . $recipe->total_time . '">' . $total_time . '</time></p>';
+		$output .= '<li id="zlrecipe-total-time">Total Time: <time itemprop="totalTime" dateTime="' . $recipe->total_time . '">' . $total_time . '</time></li>';
 	}
 
 	if ( $recipe->yield != null ) {
-		$output .= '<p id="zlrecipe-yield">Yield: <span itemprop="recipeYield">' . $recipe->yield . '</span></p>';
+		$output .= '<li id="zlrecipe-yield">Yield: <span itemprop="recipeYield">' . $recipe->yield . '</span></li>';
 	}
 
+	$output .= '</ul><!-- end .recipe-meta -->';
+
 	if ( $recipe->serving_size != null || $recipe->calories != null || $recipe->fat != null ) {
-		$output .= '<div id="zlrecipe-nutrition" itemprop="nutrition" itemscope itemtype="http://schema.org/NutritionInformation">';
+		$output .= '<ul id="zlrecipe-nutrition" class="recipe-nutrition" itemprop="nutrition" itemscope itemtype="http://schema.org/NutritionInformation">';
 
 		if ( $recipe->serving_size != null ) {
-			$output .= '<p id="zlrecipe-serving-size">Serving Size: <span itemprop="servingSize">' . $recipe->serving_size . '</span></p>';
+			$output .= '<li id="zlrecipe-serving-size">Serving Size: <span itemprop="servingSize">' . $recipe->serving_size . '</span></li>';
 		}
 
 		if ( $recipe->calories != null ) {
-			$output .= '<p id="zlrecipe-calories">Calories per serving: <span itemprop="calories">' . $recipe->calories . '</span></p>';
+			$output .= '<li id="zlrecipe-calories">Calories per serving: <span itemprop="calories">' . $recipe->calories . '</span></li>';
 		}
 
 		if ( $recipe->fat != null ) {
-			$output .= '<p id="zlrecipe-fat">Fat per serving: <span itemprop="fatContent">' . $recipe->fat . '</span></p>';
+			$output .= '<li id="zlrecipe-fat">Fat per serving: <span itemprop="fatContent">' . $recipe->fat . '</span></li>';
 		}
 
-		$output .= '</div><!-- end zlrecipe-nutrition -->';
+		$output .= '</ul><!-- end .recipe-nutrition -->';
 	}
 
 	$output .= '</div><div class="zlclear"></div></div><!-- end zl-meta -->';
