@@ -52,7 +52,9 @@ add_action('admin_head', 'amd_zlrecipe_add_recipe_button');
 add_action('admin_head','amd_zlrecipe_js_vars');
 
 function amd_zlrecipe_js_vars() {
-	if ( is_admin() ) {
+	$current_screen = get_current_screen();
+
+	if ( is_admin() && is_a( $current_screen, 'WP_Screen' ) && 'post' === $current_screen->id ) {
 		?>
 		<script type="text/javascript">
 		var post_id = '<?php global $post; echo $post->ID; ?>';
