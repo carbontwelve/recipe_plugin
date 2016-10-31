@@ -1,6 +1,6 @@
 {
   "name": "carbontwelve/recipe_plugin",
-  "description","Formats recipes so they are SEO-friendly.",
+  "description":"Formats recipes so they are SEO-friendly.",
   "keywords": ["wordpress","wp","plugin","wp-plugin","recipe", "recipe card", "recipe box", "shopping list", "grocery list", "save recipe", "print recipe", "hrecipe", "schema.org", "google rich snippets", "seo", "recipe seo"],
   "license": "GPL-3.0+",
   "authors": [
